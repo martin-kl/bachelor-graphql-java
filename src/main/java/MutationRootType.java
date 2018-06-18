@@ -2,11 +2,11 @@ import com.coxautodev.graphql.tools.GraphQLRootResolver;
 import graphql.GraphQLException;
 import graphql.schema.DataFetchingEnvironment;
 
-public class Mutation implements GraphQLRootResolver{
+public class MutationRootType implements GraphQLRootResolver{
     private final LinkRepository linkRepository;
     private final UserRepository userRepository;
 
-    public Mutation(LinkRepository linkRepository, UserRepository userRepository) {
+    public MutationRootType(LinkRepository linkRepository, UserRepository userRepository) {
         this.linkRepository = linkRepository;
         this.userRepository = userRepository;
     }

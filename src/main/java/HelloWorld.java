@@ -16,13 +16,13 @@ import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 public class HelloWorld {
 
     public static void main(String[] args) {
-        String schema = "type Query{hello: String}";
+        String schema = "type QueryRootType{hello: String}";
 
         SchemaParser schemaParser = new SchemaParser();
         TypeDefinitionRegistry typeDefinitionRegistry = schemaParser.parse(schema);
 
         RuntimeWiring runtimeWiring = newRuntimeWiring()
-                .type("Query", builder -> builder.dataFetcher("hello", new StaticDataFetcher("world")))
+                .type("QueryRootType", builder -> builder.dataFetcher("hello", new StaticDataFetcher("world")))
                 .build();
 
         SchemaGenerator schemaGenerator = new SchemaGenerator();

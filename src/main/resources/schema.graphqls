@@ -1,10 +1,11 @@
 schema {
-    query: Query
-    mutation: Mutation
+    query: QueryRootType
+    mutation: MutationRootType
 }
 
-type Query {
+type QueryRootType {
     allLinks: [Link]
+    getLink(id: ID!) :Link
 }
 
 type Link {
@@ -21,7 +22,7 @@ type User {
     password: String
 }
 
-type Mutation {
+type MutationRootType {
     createLink(url: String!, description: String!): Link
     createUser(name: String!, authProvider: AuthData!): User
     signinUser(auth: AuthData): SigninPayload
