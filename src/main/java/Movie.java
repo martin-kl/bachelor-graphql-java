@@ -6,26 +6,20 @@ public class Movie {
     private final String title;
     private final String tagline;
     private final int released;
-    private final List<Person> actors;
-    private final List<Person> directors;
-    private final List<Person> producers;
+    private final List<CastPerson> cast;
 
-    public Movie(String title, String tagline, int released, List<Person> actors, List<Person> directors, List<Person> producers) {
+    public Movie(String title, String tagline, int released, List<CastPerson> cast) {
         this.title = title;
         this.tagline = tagline;
         this.released = released;
-        this.actors = actors;
-        this.directors = directors;
-        this.producers = producers;
+        this.cast = cast;
     }
 
     public Movie(String title, String tagline, int released) {
         this.title = title;
         this.tagline = tagline;
         this.released = released;
-        this.actors = new LinkedList<>();
-        this.directors = new LinkedList<>();
-        this.producers = new LinkedList<>();
+        this.cast = new LinkedList<>();
     }
 
     public String getTitle() {
@@ -40,15 +34,7 @@ public class Movie {
         return released;
     }
 
-    public List<Person> getActors() {
-        return actors;
-    }
-
-    public List<Person> getDirectors() {
-        return directors;
-    }
-
-    public List<Person> getProducers() {
-        return producers;
+    public List<CastPerson> getCast() {
+        return cast;
     }
 }

@@ -1,9 +1,6 @@
 import com.coxautodev.graphql.tools.GraphQLRootResolver;
 import graphql.GraphQLException;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.v1.*;
 
 import java.util.*;
 
@@ -59,12 +56,22 @@ public class QueryRootType implements GraphQLRootResolver {
 
     public Movie getMovie(String title) {
         try (Session session = driver.session()) {
-            StatementResult result = session.run("MATCH (m:Movie {title:{title}}) RETURN m.title as title, " +
-                    "m.tagline as tagline, m.released as released LIMIT 1", Collections.singletonMap("title", title));
+            StatementResult result = session.run("MATCH (movie:Movie {title:{title}}) OPTIONAL MATCH (movie)<-[r]-(person:Person)" +
+                            " RETURN movie.title as title, movie.tagline as tagline, movie.released as released," +
+                            " collect({name:person.name, born:person.born, job:head(split(lower(type(r)),'_'))}) as cast LIMIT 1",
+                    Collections.singletonMap("title", title));
             if (result.hasNext()) {
                 Record record = result.next();
+                List<CastPerson> cast = new LinkedList<>();
+
+                for (int i = 0; i < record.get("cast").size(); i++) {
+                    cast.add(new CastPerson(record.get("cast").get(i).get("name").asString(),
+                            record.get("cast").get(i).get("born").asInt(),
+                            record.get("cast").get(i).get("job").asString()));
+                }
+
                 return new Movie(record.get("title").asString(),
-                        record.get("tagline").asString(), record.get("released").asInt());
+                        record.get("tagline").asString(), record.get("released").asInt(), cast);
             }
         }
         throw new GraphQLException("error while fetching the movie with the title:" + title);

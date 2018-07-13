@@ -20,15 +20,15 @@ type Movie {
     title: String!
     tagline: String!
     released: Int!
-    actors: [Person]
-    directors: [Person]
-    producers: [Person]
+    cast: [CastPerson]
 }
 
 type Person {
     name: String!
     born: Int!
-    actedIn: [Movie]
-    directed: [Movie]
-    produced: [Movie]
+}
+type CastPerson {
+    name: String!
+    born: Int!
+    job: String!
 }
