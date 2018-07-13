@@ -1,5 +1,4 @@
 import com.coxautodev.graphql.tools.GraphQLRootResolver;
-
 import java.util.List;
 
 public class QueryRootType implements GraphQLRootResolver {

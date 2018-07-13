@@ -21,8 +21,7 @@ public class LinkRepository {
                 return link;
             }
         }
-        //TODO do not return null^^
-        return null;
+        throw new NoSuchElementException("No element with id="+id);
     }
 
     public List<Link> getAllLinks() {
