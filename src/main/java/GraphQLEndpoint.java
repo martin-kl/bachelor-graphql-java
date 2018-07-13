@@ -1,27 +1,20 @@
 import com.coxautodev.graphql.tools.SchemaParser;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import graphql.schema.GraphQLSchema;
-import graphql.servlet.GraphQLContext;
 import graphql.servlet.SimpleGraphQLServlet;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.GraphDatabase;
 
-import java.util.Optional;
 
-/**
- * von: https://www.howtographql.com/graphql-java/1-getting-started/
- */
 @WebServlet(urlPatterns = "/graphql")
 public class GraphQLEndpoint extends SimpleGraphQLServlet {
 
-    private static final LinkRepository linkRepository;
-    private static final UserRepository userRepository;
+    private final static Driver driver;
 
     static {
-        //start database here if connected to a db
-        linkRepository = new LinkRepository();
-        userRepository = new UserRepository();
+        //in our case we start a connection
+        driver = GraphDatabase.driver("bolt://localhost");
     }
 
     public GraphQLEndpoint() {
@@ -32,22 +25,9 @@ public class GraphQLEndpoint extends SimpleGraphQLServlet {
         return SchemaParser.newParser()
                 .file("schema.graphqls")
                 .resolvers(
-                        new QueryRootType(linkRepository),
-                        new MutationRootType(linkRepository, userRepository),
-                        new SigninResolver(),
-                        new LinkResolver(userRepository))
+                        new QueryRootType(driver),
+                        new MutationRootType(driver))
                 .build()
                 .makeExecutableSchema();
-    }
-
-    @Override
-    protected GraphQLContext createContext(Optional<HttpServletRequest> request, Optional<HttpServletResponse> response) {
-        User user = request
-            .map(req -> req.getHeader("Authorization"))
-            .filter(id -> !id.isEmpty())
-            .map(id -> id.replace("Bearer ", ""))
-            .map(userRepository::findById)
-            .orElse(null);
-        return new AuthContext(user, request, response);
     }
 }

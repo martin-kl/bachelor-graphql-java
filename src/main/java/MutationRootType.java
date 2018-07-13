@@ -1,34 +1,28 @@
 import com.coxautodev.graphql.tools.GraphQLRootResolver;
-import graphql.GraphQLException;
-import graphql.schema.DataFetchingEnvironment;
+import org.neo4j.driver.v1.Driver;
 
 public class MutationRootType implements GraphQLRootResolver{
-    private final LinkRepository linkRepository;
-    private final UserRepository userRepository;
+    private final Driver driver;
 
-    public MutationRootType(LinkRepository linkRepository, UserRepository userRepository) {
-        this.linkRepository = linkRepository;
-        this.userRepository = userRepository;
+    public MutationRootType(Driver driver) {
+        this.driver = driver;
     }
 
-    public Link createLink(String url, String description, DataFetchingEnvironment env) {
-        AuthContext context = env.getContext();
-        Link newLink = new Link(linkRepository.getId(), url, description, context.getUser().getId());
-        linkRepository.saveLink(newLink);
-        return newLink;
+    public Person createPerson(String name, int born) {
+        return null;
+        /*
+        Movie newMovie = new Movie(linkRepository.getId(), url, description, context.getUser().getId());
+        linkRepository.saveLink(newMovie);
+        return newMovie;
+        */
     }
 
-    public User createUser(String name, AuthData auth) {
-        User newUser = new User(userRepository.getId(), name, auth.getEmail(), auth.getPassword());
-        userRepository.saveUser(newUser);
-        return newUser;
-    }
-
-    public SigninPayload signinUser(AuthData auth) throws IllegalArgumentException {
-        User user = userRepository.findByEmail(auth.getEmail());
-        if(user.getPassword().equals(auth.getPassword())) {
-            return new SigninPayload(user.getId(), user);
-        }
-        throw new GraphQLException("Invalid credentials");
+    public Movie createMovie(String title, int released) {
+        return null;
+        /*
+        Person newPerson = new Person(userRepository.getId(), name, auth.getEmail(), auth.getPassword());
+        userRepository.saveUser(newPerson);
+        return newPerson;
+        */
     }
 }
