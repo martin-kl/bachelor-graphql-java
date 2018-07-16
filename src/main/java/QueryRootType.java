@@ -65,8 +65,9 @@ public class QueryRootType implements GraphQLRootResolver {
                 List<CastPerson> cast = new LinkedList<>();
 
                 for (int i = 0; i < record.get("cast").size(); i++) {
+                    int born = record.get("cast").get(i).get("born").toString().equals("NULL") ? 0 : record.get("cast").get(i).get("born").asInt();
                     cast.add(new CastPerson(record.get("cast").get(i).get("name").asString(),
-                            record.get("cast").get(i).get("born").asInt(),
+                            born,
                             record.get("cast").get(i).get("job").asString()));
                 }
 
