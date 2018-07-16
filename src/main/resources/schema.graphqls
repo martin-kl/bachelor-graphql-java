@@ -12,7 +12,7 @@ type QueryRootType {
 
 type MutationRootType {
     createPerson(name: String!, born: Int!): Person
-    createMovie(title: String!, released: Int!): Movie
+    createMovie(title: String!, tagline: String! released: Int!): Movie
 }
 
 

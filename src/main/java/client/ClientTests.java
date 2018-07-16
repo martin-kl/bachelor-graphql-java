@@ -54,7 +54,7 @@ public class ClientTests {
             if (i % 10 == 0) System.out.print(". ");
             int n = rand.nextInt(queries.length);
             startTime = System.nanoTime();
-            requestAndVerify(queries[n].query, queries[n].verification, false);
+            requestAndVerify(queries[n].query, queries[n].verification, false); //verification is disable to avoid having an impact on the times, but verification was done beforehand
             endTime = System.nanoTime();
             avgTimes[i] = endTime - startTime;
             if(avgTimes[i] < minTime) minTime = avgTimes[i];
