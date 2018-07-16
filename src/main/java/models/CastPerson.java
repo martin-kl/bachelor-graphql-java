@@ -1,4 +1,6 @@
-package graphql;
+package models;
+
+import models.Person;
 
 public class CastPerson extends Person {
 

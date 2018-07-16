@@ -1,22 +1,36 @@
-package graphql;
+package rest;
 
-import com.coxautodev.graphql.tools.GraphQLRootResolver;
 import models.CastPerson;
 import models.Movie;
 import models.Person;
 import org.neo4j.driver.v1.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
-public class QueryRootType implements GraphQLRootResolver {
+@RestController
+public class Controller {
+    private static final Driver driver = GraphDatabase.driver("bolt://localhost");
 
-    private final Driver driver;
-
-    public QueryRootType(Driver driver) {
-        this.driver = driver;
+    @RequestMapping("/getPerson")
+    public Person getPerson(@RequestParam(value = "name") String name) {
+        //because some persons have no born value, we have to check these values and set it to 0 in such a case
+        try (Session session = driver.session()) {
+            StatementResult result = session.run("MATCH (a:Person {name:{name}}) RETURN a.name as name, a.born as born LIMIT 1", Collections.singletonMap("name", name));
+            if (result.hasNext()) {
+                Record record = result.next();
+                return new Person(record.get("name").asString(),
+                        record.get("born").type().name().equals("NULL") ? 0 : record.get("born").asInt());
+            }
+        }
+        return null;
     }
 
-
+    @RequestMapping("/allPersons")
     public List<Person> allPersons() {
         //because some persons have no born value, we have to check these values and set it to 0 in such a case
         try (Session session = driver.session()) {
@@ -31,34 +45,9 @@ public class QueryRootType implements GraphQLRootResolver {
         }
     }
 
-    public Person getPerson(String name) {
-        //because some persons have no born value, we have to check these values and set it to 0 in such a case
-        try (Session session = driver.session()) {
-            StatementResult result = session.run("MATCH (a:Person {name:{name}}) RETURN a.name as name, a.born as born LIMIT 1", Collections.singletonMap("name", name));
-            if (result.hasNext()) {
-                Record record = result.next();
-                return new Person(record.get("name").asString(),
-                        record.get("born").type().name().equals("NULL") ? 0 : record.get("born").asInt());
-            }
-        }
-        throw new GraphQLException("error while fetching a user with the name:" + name);
-    }
 
-    public List<Movie> allMovies() {
-        try (Session session = driver.session()) {
-            StatementResult result = session.run("MATCH (m:Movie) RETURN m.title as title, " +
-                    "m.tagline as tagline, m.released as released");
-            List<Movie> movies = new LinkedList<>();
-            while (result.hasNext()) {
-                Record record = result.next();
-                movies.add(new Movie(record.get("title").asString(),
-                        record.get("tagline").asString(), record.get("released").asInt()));
-            }
-            return movies;
-        }
-    }
-
-    public Movie getMovie(String title) {
+    @RequestMapping("/getMovie")
+    public Movie getMovie(@RequestParam(value = "title") String title) {
         try (Session session = driver.session()) {
             StatementResult result = session.run("MATCH (movie:Movie {title:{title}}) OPTIONAL MATCH (movie)<-[r]-(person:Person)" +
                             " RETURN movie.title as title, movie.tagline as tagline, movie.released as released," +
@@ -79,6 +68,22 @@ public class QueryRootType implements GraphQLRootResolver {
                         record.get("tagline").asString(), record.get("released").asInt(), cast);
             }
         }
-        throw new GraphQLException("error while fetching the movie with the title:" + title);
+        return null;
     }
+
+    @RequestMapping("/allMovies")
+    public List<Movie> allMovies() {
+        try (Session session = driver.session()) {
+            StatementResult result = session.run("MATCH (m:Movie) RETURN m.title as title, " +
+                    "m.tagline as tagline, m.released as released");
+            List<Movie> movies = new LinkedList<>();
+            while (result.hasNext()) {
+                Record record = result.next();
+                movies.add(new Movie(record.get("title").asString(),
+                        record.get("tagline").asString(), record.get("released").asInt()));
+            }
+            return movies;
+        }
+    }
+
 }

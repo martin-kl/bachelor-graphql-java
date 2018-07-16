@@ -1,4 +1,4 @@
-package graphql;
+package models;
 
 public class Person {
     private final String name;

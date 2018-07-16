@@ -1,6 +1,8 @@
 package graphql;
 
 import com.coxautodev.graphql.tools.GraphQLRootResolver;
+import models.Movie;
+import models.Person;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
