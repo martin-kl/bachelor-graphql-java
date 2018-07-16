@@ -1,5 +1,6 @@
+package graphql;
+
 import com.coxautodev.graphql.tools.GraphQLRootResolver;
-import graphql.GraphQLException;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;

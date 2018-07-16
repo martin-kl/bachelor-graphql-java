@@ -1,3 +1,5 @@
+package graphql;
+
 public class CastPerson extends Person {
 
     private String job;

@@ -1,3 +1,5 @@
+package graphql;
+
 import com.coxautodev.graphql.tools.SchemaParser;
 import javax.servlet.annotation.WebServlet;
 
@@ -5,7 +7,6 @@ import graphql.schema.GraphQLSchema;
 import graphql.servlet.SimpleGraphQLServlet;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
-
 
 @WebServlet(urlPatterns = "/graphql")
 public class GraphQLEndpoint extends SimpleGraphQLServlet {

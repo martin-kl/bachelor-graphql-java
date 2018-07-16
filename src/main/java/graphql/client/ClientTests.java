@@ -1,4 +1,4 @@
-package client;
+package graphql.client;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -23,7 +23,7 @@ public class ClientTests {
 
     private static CloseableHttpClient httpClientForGraphql = null;
     private static String connectionUrl = "http://localhost:8080/graphql";
-    private final static int TESTSIZE = 500;
+    private final static int TESTSIZE = 300;
 
     private static QueryString queryTomHanks = new QueryString("{\"query\": \"{ getPerson(name: \\\"Tom Hanks\\\") { name born } }\" }", "1956");
     private static QueryString queryRiverPhoenix = new QueryString("{\"query\": \"{ getPerson(name: \\\"River Phoenix\\\") { name born } }\" }", "1970");
