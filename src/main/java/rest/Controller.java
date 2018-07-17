@@ -4,8 +4,8 @@ import models.CastPerson;
 import models.Movie;
 import models.Person;
 import org.neo4j.driver.v1.*;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
@@ -16,8 +16,8 @@ import java.util.List;
 public class Controller {
     private static final Driver driver = GraphDatabase.driver("bolt://localhost");
 
-    @RequestMapping("/getPerson")
-    public Person getPerson(@RequestParam(value = "name") String name) {
+    @RequestMapping("/person/{name}")
+    public Person getPerson(@PathVariable String name) {
         //because some persons have no born value, we have to check these values and set it to 0 in such a case
         try (Session session = driver.session()) {
             StatementResult result = session.run("MATCH (a:Person {name:{name}}) RETURN a.name as name, a.born as born LIMIT 1", Collections.singletonMap("name", name));
@@ -30,7 +30,7 @@ public class Controller {
         return null;
     }
 
-    @RequestMapping("/allPersons")
+    @RequestMapping("/persons")
     public List<Person> allPersons() {
         //because some persons have no born value, we have to check these values and set it to 0 in such a case
         try (Session session = driver.session()) {
@@ -46,8 +46,8 @@ public class Controller {
     }
 
 
-    @RequestMapping("/getMovie")
-    public Movie getMovie(@RequestParam(value = "title") String title) {
+    @RequestMapping("/movie/{title}")
+    public Movie getMovie(@PathVariable String title) {
         try (Session session = driver.session()) {
             StatementResult result = session.run("MATCH (movie:Movie {title:{title}}) OPTIONAL MATCH (movie)<-[r]-(person:Person)" +
                             " RETURN movie.title as title, movie.tagline as tagline, movie.released as released," +
@@ -71,7 +71,7 @@ public class Controller {
         return null;
     }
 
-    @RequestMapping("/allMovies")
+    @RequestMapping("/movies")
     public List<Movie> allMovies() {
         try (Session session = driver.session()) {
             StatementResult result = session.run("MATCH (m:Movie) RETURN m.title as title, " +

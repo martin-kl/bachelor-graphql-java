@@ -7,6 +7,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import utils.QueryString;
 
 import java.io.IOException;
 import java.util.Random;
@@ -19,7 +20,7 @@ import java.util.Random;
  *      Erste Query die überhaupt auf GraphQL Server trifft braucht nochmal um vielfaches länger (also erste Query nach Serverstart)
  *
  */
-public class ClientTests {
+public class GraphQLClientTests {
 
     private static CloseableHttpClient httpClientForGraphql = null;
     private static String connectionUrl = "http://localhost:8080/graphql";
@@ -54,7 +55,7 @@ public class ClientTests {
             if (i % 10 == 0) System.out.print(". ");
             int n = rand.nextInt(queries.length);
             startTime = System.nanoTime();
-            requestAndVerify(queries[n].query, queries[n].verification, false); //verification is disable to avoid having an impact on the times, but verification was done beforehand
+            requestAndVerify(queries[n].getQuery(), queries[n].getVerification(), false); //verification is disable to avoid having an impact on the times, but verification was done beforehand
             endTime = System.nanoTime();
             avgTimes[i] = endTime - startTime;
             if(avgTimes[i] < minTime) minTime = avgTimes[i];
@@ -103,13 +104,4 @@ public class ClientTests {
         }
     }
 
-    private static class QueryString {
-        String query;
-        String verification;
-
-        QueryString(String query, String verification) {
-            this.query = query;
-            this.verification = verification;
-        }
-    }
 }
