@@ -5,8 +5,23 @@ import utils.QueryString;
 
 import java.util.Random;
 
+/**
+ * Created by Martin Klampfer in 2018
+ * Technical University Vienna, Bachelor: Software & Information Engineering
+ *
+ * Test class for REST access point.
+ * This class contains 8 different versions of requesting information from REST endpoints.
+ * If the variable RANDOMQUERIES is set to true, information is randomly requested from one of the 8 versions,
+ * otherwise we request information about the movie "The Da Vinci Code" from the corresponding endpoint.
+ *
+ * To enable the verification in the requestAndVerify, pass true for the paramter verifyResponse.
+ * To enable the assertion in the requestAndVerify method, add the keyword "-ea" to vm options of your IDE.
+ */
+
 public class RestClientTest {
-    private static final int TESTSIZE = 500;
+    private static final int TESTSIZE = 1000;
+    private static final boolean RANDOMQUERIES = true;
+
     private static RestTemplate restTemplate = new RestTemplate();
     private final static String CONNECTIONURL = "http://localhost:8080";
 
@@ -34,18 +49,33 @@ public class RestClientTest {
 
         long startTime;
         long endTime;
-        for (int i = 0; i < TESTSIZE; i++) {
-            if (i % 10 == 0) System.out.print(". ");
-            int n = rand.nextInt(queries.length);
-            startTime = System.nanoTime();
-            requestAndVerify(queries[n].getQuery(), queries[n].getVerification(), false); //verification is disable to avoid having an impact on the times, but verification was done beforehand
-            endTime = System.nanoTime();
-            avgTimes[i] = endTime - startTime;
-            if(avgTimes[i] < minTime) minTime = avgTimes[i];
-            if(avgTimes[i] > maxTime) maxTime = avgTimes[i];
-            if(i != 0 && avgTimes[i] > maxTimeStartingFromSecondQuery) maxTimeStartingFromSecondQuery = avgTimes[i];
+        if (RANDOMQUERIES) {
+            for (int i = 0; i < TESTSIZE; i++) {
+                if (i % 10 == 0) System.out.print(". ");
+                int n = rand.nextInt(queries.length);
+                startTime = System.nanoTime();
+                requestAndVerify(queries[n].getQuery(), queries[n].getVerification(), false); //verification is disable to avoid having an impact on the times, but verification was done beforehand
+                endTime = System.nanoTime();
+                avgTimes[i] = endTime - startTime;
+                if (avgTimes[i] < minTime) minTime = avgTimes[i];
+                if (avgTimes[i] > maxTime) maxTime = avgTimes[i];
+                if (i != 0 && avgTimes[i] > maxTimeStartingFromSecondQuery)
+                    maxTimeStartingFromSecondQuery = avgTimes[i];
+            }
+        } else {
+            //just query for a movie, cause this is the most advanced query
+            for (int i = 0; i < TESTSIZE; i++) {
+                if (i % 10 == 0) System.out.print(". ");
+                startTime = System.nanoTime();
+                requestAndVerify(queryDaVinciCode.getQuery(), queryDaVinciCode.getVerification(), false);
+                endTime = System.nanoTime();
+                avgTimes[i] = endTime - startTime;
+                if (avgTimes[i] < minTime) minTime = avgTimes[i];
+                if (avgTimes[i] > maxTime) maxTime = avgTimes[i];
+                if (i != 0 && avgTimes[i] > maxTimeStartingFromSecondQuery)
+                    maxTimeStartingFromSecondQuery = avgTimes[i];
+            }
         }
-
         System.out.println("\nAll tests done...");
         double avgTime = avgTimes[0] / 1000000;
         for (int i = 1; i < avgTimes.length; i++) {

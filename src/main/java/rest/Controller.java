@@ -12,6 +12,15 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Created by Martin Klampfer in 2018
+ * Technical University Vienna, Bachelor: Software & Information Engineering
+ *
+ * This class contains the implementations of the different REST endpoints.
+ * Every method implements one endpoint.
+ * The driver is loaded and can be changed via the driver variable in the beginning.
+ */
+
 @RestController
 public class Controller {
     private static final Driver driver = GraphDatabase.driver("bolt://localhost");

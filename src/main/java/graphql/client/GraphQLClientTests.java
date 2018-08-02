@@ -13,18 +13,24 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * To enable the assertion in the verify method, add the keyword "-ea" to vm options of your IDE
+ * Created by Martin Klampfer in 2018
+ * Technical University Vienna, Bachelor: Software & Information Engineering
  *
- * Erkenntnisse bisher (Stand 16.07.2018)
- *      Erste Query braucht um einiges länger als folgende
- *      Erste Query die überhaupt auf GraphQL Server trifft braucht nochmal um vielfaches länger (also erste Query nach Serverstart)
+ * Test class for GraphQL access point. This class contains 8 different queries that can be used.
+ * If the variable RANDOMQUERIES is set to true, random queries are sent,
+ * otherwise a query requesting information about the movie "The Da Vinci Code" is sent.
  *
+ * To enable the verification in the requestAndVerify, pass true for the paramter verifyResponse.
+ * To enable the assertion in the requestAndVerify method, add the keyword "-ea" to vm options of your IDE.
  */
+
 public class GraphQLClientTests {
+
+    private final static int TESTSIZE = 1000;
+    private final static boolean RANDOMQUERIES = true;
 
     private static CloseableHttpClient httpClientForGraphql = null;
     private static String connectionUrl = "http://localhost:8080/graphql";
-    private final static int TESTSIZE = 300;
 
     private static QueryString queryTomHanks = new QueryString("{\"query\": \"{ getPerson(name: \\\"Tom Hanks\\\") { name born } }\" }", "1956");
     private static QueryString queryRiverPhoenix = new QueryString("{\"query\": \"{ getPerson(name: \\\"River Phoenix\\\") { name born } }\" }", "1970");
@@ -51,16 +57,32 @@ public class GraphQLClientTests {
 
         long startTime;
         long endTime;
-        for (int i = 0; i < TESTSIZE; i++) {
-            if (i % 10 == 0) System.out.print(". ");
-            int n = rand.nextInt(queries.length);
-            startTime = System.nanoTime();
-            requestAndVerify(queries[n].getQuery(), queries[n].getVerification(), false); //verification is disable to avoid having an impact on the times, but verification was done beforehand
-            endTime = System.nanoTime();
-            avgTimes[i] = endTime - startTime;
-            if(avgTimes[i] < minTime) minTime = avgTimes[i];
-            if(avgTimes[i] > maxTime) maxTime = avgTimes[i];
-            if(i != 0 && avgTimes[i] > maxTimeStartingFromSecondQuery) maxTimeStartingFromSecondQuery = avgTimes[i];
+        if (RANDOMQUERIES) {
+            for (int i = 0; i < TESTSIZE; i++) {
+                if (i % 10 == 0) System.out.print(". ");
+                int n = rand.nextInt(queries.length);
+                startTime = System.nanoTime();
+                requestAndVerify(queries[n].getQuery(), queries[n].getVerification(), false); //verification is disable to avoid having an impact on the times, but verification was done beforehand
+                endTime = System.nanoTime();
+                avgTimes[i] = endTime - startTime;
+                if (avgTimes[i] < minTime) minTime = avgTimes[i];
+                if (avgTimes[i] > maxTime) maxTime = avgTimes[i];
+                if (i != 0 && avgTimes[i] > maxTimeStartingFromSecondQuery)
+                    maxTimeStartingFromSecondQuery = avgTimes[i];
+            }
+        } else {
+            //just query for a movie, cause this is the most advanced query
+            for (int i = 0; i < TESTSIZE; i++) {
+                if (i % 10 == 0) System.out.print(". ");
+                startTime = System.nanoTime();
+                requestAndVerify(queryDaVinciCode.getQuery(), queryDaVinciCode.getVerification(), false);
+                endTime = System.nanoTime();
+                avgTimes[i] = endTime - startTime;
+                if (avgTimes[i] < minTime) minTime = avgTimes[i];
+                if (avgTimes[i] > maxTime) maxTime = avgTimes[i];
+                if (i != 0 && avgTimes[i] > maxTimeStartingFromSecondQuery)
+                    maxTimeStartingFromSecondQuery = avgTimes[i];
+            }
         }
 
         System.out.println("\nAll tests done...");
@@ -70,10 +92,10 @@ public class GraphQLClientTests {
         }
         avgTime /= avgTimes.length;
         System.out.println("\nResults:");
-        System.out.println("Maximum time: "+maxTime / 1000000.0);
-        System.out.println("Maximum time after first query: "+maxTimeStartingFromSecondQuery / 1000000.0);
-        System.out.println("Minimum time: "+ minTime / 1000000.0);
-        System.out.println("Avg time: "+ avgTime);
+        System.out.println("Maximum time: " + maxTime / 1000000.0);
+        System.out.println("Maximum time after first query: " + maxTimeStartingFromSecondQuery / 1000000.0);
+        System.out.println("Minimum time: " + minTime / 1000000.0);
+        System.out.println("Avg time: " + avgTime);
     }
 
     private static void requestAndVerify(String query, String verifyString, boolean verifyResponse) {

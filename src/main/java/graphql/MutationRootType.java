@@ -8,6 +8,11 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 
+/**
+ * Created by Martin Klampfer in 2018
+ * Technical University Vienna, Bachelor: Software & Information Engineering
+ */
+
 public class MutationRootType implements GraphQLRootResolver {
     private final Driver driver;
 

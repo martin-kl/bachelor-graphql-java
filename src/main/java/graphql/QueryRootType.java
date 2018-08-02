@@ -8,6 +8,11 @@ import org.neo4j.driver.v1.*;
 
 import java.util.*;
 
+/**
+ * Created by Martin Klampfer in 2018
+ * Technical University Vienna, Bachelor: Software & Information Engineering
+ */
+
 public class QueryRootType implements GraphQLRootResolver {
 
     private final Driver driver;

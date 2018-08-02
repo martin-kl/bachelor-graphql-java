@@ -3,6 +3,11 @@ package models;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Created by Martin Klampfer in 2018
+ * Technical University Vienna, Bachelor: Software & Information Engineering
+ */
+
 public class Movie {
 
     private final String title;

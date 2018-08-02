@@ -1,5 +1,10 @@
 package models;
 
+/**
+ * Created by Martin Klampfer in 2018
+ * Technical University Vienna, Bachelor: Software & Information Engineering
+ */
+
 public class Person {
     private final String name;
     private final int born;
