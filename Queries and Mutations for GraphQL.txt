@@ -1,0 +1,51 @@
+Queries & Mutations:
+
+{
+  getMovie(title:"The Da Vinci Code") {
+    title
+    tagline
+    released
+    cast {
+      name
+      job
+    }
+  }
+}
+{
+  allMovies {
+    title
+    tagline
+    released
+  }
+}
+
+
+
+query {
+  getPerson(name: "Martin") {
+    name
+    born
+  }
+}
+{
+  allPersons {
+    name
+    born
+  }
+}
+
+
+
+mutation {
+  createMovie(title: "Musterfilm", tagline:"Mustertagline", released: 2018) {
+    title
+    tagline
+    released
+  }
+}
+mutation {
+  createPerson(name: "Martin", born: 1995) {
+    name
+    born
+  }
+}

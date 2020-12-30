@@ -4,36 +4,31 @@ schema {
 }
 
 type QueryRootType {
-    allLinks: [Link]
-    getLink(id: ID!) :Link
-}
-
-type Link {
-    id: ID!
-    url: String!
-    description: String!
-    postedBy: User
-}
-
-type User {
-    id: ID!
-    name: String!
-    email: String
-    password: String
+    allMovies: [Movie]
+    getMovie(title: String!) :Movie
+    allPersons: [Person]
+    getPerson(name: String!) :Person
 }
 
 type MutationRootType {
-    createLink(url: String!, description: String!): Link
-    createUser(name: String!, authProvider: AuthData!): User
-    signinUser(auth: AuthData): SigninPayload
+    createPerson(name: String!, born: Int!): Person
+    createMovie(title: String!, tagline: String! released: Int!): Movie
 }
 
-input AuthData {
-    email: String!
-    password: String!
+
+type Movie {
+    title: String!
+    tagline: String!
+    released: Int!
+    cast: [CastPerson]
 }
 
-type SigninPayload {
-    token: String
-    user: User
+type Person {
+    name: String!
+    born: Int!
+}
+type CastPerson {
+    name: String!
+    born: Int!
+    job: String!
 }
